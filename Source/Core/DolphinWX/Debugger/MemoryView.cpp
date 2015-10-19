@@ -53,6 +53,7 @@ CMemoryView::CMemoryView(DebugInterface* debuginterface, wxWindow* parent)
 	, curAddress(debuginterface->GetPC())
 	, dataType(MemoryDataType::U8)
 	, viewAsType(VIEWAS_FP)
+	, autoUpdate(false)
 {
 	Bind(wxEVT_PAINT, &CMemoryView::OnPaint, this);
 	Bind(wxEVT_LEFT_DOWN, &CMemoryView::OnMouseDownL, this);
@@ -62,6 +63,9 @@ CMemoryView::CMemoryView(DebugInterface* debuginterface, wxWindow* parent)
 	Bind(wxEVT_MOUSEWHEEL, &CMemoryView::OnScrollWheel, this);
 	Bind(wxEVT_MENU, &CMemoryView::OnPopupMenu, this);
 	Bind(wxEVT_SIZE, &CMemoryView::OnResize, this);
+
+	m_update_timer.SetOwner(this);
+	Bind(wxEVT_TIMER, &CMemoryView::OnTimerUpdate, this);
 }
 
 int CMemoryView::YToAddress(int y)
@@ -282,6 +286,7 @@ void CMemoryView::OnPaint(wxPaintEvent& event)
 	// TODO - clean up this freaking mess!!!!!
 	for (int row = -numRows; row <= numRows; row++)
 	{
+		m_update_timer.Stop();
 		unsigned int address = curAddress + row * align;
 
 		int rowY1 = rc.height / 2 + rowHeight * row - rowHeight / 2;
@@ -411,6 +416,8 @@ void CMemoryView::OnPaint(wxPaintEvent& event)
 				dc.SetBrush(mcBrush);
 				dc.DrawRectangle(8, rowY1 + 1, 11, 11);
 			}
+			if(autoUpdate)
+				m_update_timer.Start(100);
 		}
 	}
 
@@ -421,4 +428,9 @@ void CMemoryView::OnResize(wxSizeEvent& event)
 {
 	Refresh();
 	event.Skip();
+}
+
+void CMemoryView::OnTimerUpdate(wxTimerEvent&)
+{
+	Refresh();
 }

@@ -5,6 +5,7 @@
 #pragma once
 
 #include <wx/control.h>
+#include <wx/timer.h>
 #include "Common/CommonTypes.h"
 
 class DebugInterface;
@@ -34,6 +35,12 @@ public:
 		Refresh();
 	}
 
+	void SetAutoUpdate(bool toggle)
+	{
+		autoUpdate = toggle;
+		Refresh();
+	}
+
 private:
 	void OnPaint(wxPaintEvent& event);
 	void OnMouseDownL(wxMouseEvent& event);
@@ -45,6 +52,7 @@ private:
 
 	int YToAddress(int y);
 	void OnResize(wxSizeEvent& event);
+	void OnTimerUpdate(wxTimerEvent&);
 
 	DebugInterface* debugger;
 
@@ -67,4 +75,7 @@ private:
 	};
 
 	EViewAsType viewAsType;
+
+	wxTimer m_update_timer;
+	bool autoUpdate;
 };

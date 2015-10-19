@@ -50,6 +50,7 @@ private:
 	void OnDumpMemory(wxCommandEvent& event);
 	void OnDumpMem2(wxCommandEvent& event);
 	void OnDumpFakeVMEM(wxCommandEvent& event);
+	void OnToggleUpdate(wxCommandEvent& event);
 
 	wxCheckBox* chk8;
 	wxCheckBox* chk16;
@@ -63,4 +64,6 @@ private:
 
 	wxSearchCtrl* addrbox;
 	wxTextCtrl* valbox;
+
+	wxCheckBox* chkUpdate;
 };

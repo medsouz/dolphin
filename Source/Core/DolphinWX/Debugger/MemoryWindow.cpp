@@ -45,7 +45,8 @@ enum
 	IDM_U32,
 	IDM_SEARCH,
 	IDM_ASCII,
-	IDM_HEX
+	IDM_HEX,
+	IDM_UPDATE
 };
 
 BEGIN_EVENT_TABLE(CMemoryWindow, wxPanel)
@@ -61,6 +62,7 @@ BEGIN_EVENT_TABLE(CMemoryWindow, wxPanel)
 	EVT_BUTTON(IDM_SEARCH,          CMemoryWindow::onSearch)
 	EVT_CHECKBOX(IDM_ASCII,         CMemoryWindow::onAscii)
 	EVT_CHECKBOX(IDM_HEX,           CMemoryWindow::onHex)
+	EVT_CHECKBOX(IDM_UPDATE,        CMemoryWindow::OnToggleUpdate)
 END_EVENT_TABLE()
 
 CMemoryWindow::CMemoryWindow(wxWindow* parent, wxWindowID id,
@@ -100,12 +102,16 @@ CMemoryWindow::CMemoryWindow(wxWindow* parent, wxWindowID id,
 	sizerDataTypes->Add(chk16 = new wxCheckBox(this, IDM_U16, "U16"));
 	sizerDataTypes->Add(chk32 = new wxCheckBox(this, IDM_U32, "U32"));
 
+	wxStaticBoxSizer* const liveUpdateSettings = new wxStaticBoxSizer(wxVERTICAL, this, _("Auto Updating"));
+	liveUpdateSettings->Add(chkUpdate = new wxCheckBox(this, IDM_UPDATE, "Update"));
+
 	wxBoxSizer* const sizerRight = new wxBoxSizer(wxVERTICAL);
 	sizerRight->Add(search_sizer);
 	sizerRight->AddSpacer(5);
 	sizerRight->Add(dump_sizer);
 	sizerRight->Add(sizerSearchType);
 	sizerRight->Add(sizerDataTypes);
+	sizerRight->Add(liveUpdateSettings);
 
 	wxBoxSizer* const sizerBig = new wxBoxSizer(wxHORIZONTAL);
 	sizerBig->Add(memview, 20, wxEXPAND);
@@ -440,4 +446,9 @@ void CMemoryWindow::onAscii(wxCommandEvent& event)
 void CMemoryWindow::onHex(wxCommandEvent& event)
 {
 	chkAscii->SetValue(0);
+}
+
+void CMemoryWindow::OnToggleUpdate(wxCommandEvent& event)
+{
+	memview->SetAutoUpdate(chkUpdate->GetValue());
 }
